@@ -1,0 +1,40 @@
+// sys1win.lnt - lint config file for checking System 12 pgms 12-04
+//               (this file is based on sys0win.lnt used in the previous project)
+//
+// Since the lint file is named sys1win.lnt for project VER11 and is named
+// sys0win.lnt for the previous project, use the question mark ('?') symbol
+// below and pcLint will use either file.  This allows 1 command to work
+// for all projects.
+//
+// VC6 USAGE:
+//    Command Line: D:\tools\lint\lint.exe
+//    Arguments:    -iD:\tools\lint -i$(FileDir) -u env-vc6.lnt sys?win.lnt $(FileName)
+//    Initial Dir:  $(FileDir)
+//    Other:        check Redirect to Output Window, leave the other 2 windows unchecked
+//
+// CodeWrite USAGE:
+//    Select Project | Configure - Alternate 1
+//    ftee32 D:\tools\lint\lint.exe +v -u -iD:\tools\lint -i%b env-cw.lnt sys?win.lnt %b%e
+//    make sure ERROR PARSER 1 is _ErrorInfoDefault
+//
+// the -i option tells lint to look for *.lnt files in d:\tools\lint
+//        and in the file's directory (to allow sys9win.lnt to stay in your work dir)
+// the -u option tells lint to do a unit checkout
+// the +v option tells lint to output errors to std err as well as std out
+//
+//
+// NOTE:  You must supply your own PERSONAL.LNT file 
+//        SYS1WIN.LNT is a TLIB file.  You must check it out to change it. 
+//        It will be most convienent to leave SYS1WIN.LNT in your work dir.
+//        Make sure SYS1WIN.LNT is in only ONE directory.
+//
+// 03-28-06 TJW Moved settings to Settings.lnt for sharing with Torture.lnt and also reorganized
+// 11-08-05 TJW Changes for Version 8.00t of Lint
+// 12-14-04 Modifiy to work with v12 project.
+// 04-29-03 Rename to sys1win.lnt and move to the v11 project.
+// 02-05-01 Modified to work with new version of PC-Lint v7.50z.  We start final linting on ver10 project.
+
+Settings.lnt      // Contains all the settings that are common between Torture.lnt and Sys1Win.lnt
+
+personal.lnt      // e.g. include dirs, error suppression, etc..
+                  // settings you make in your personal.lnt should override all others

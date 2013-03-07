@@ -1,0 +1,320 @@
+// Settings.lnt - lint config file that has all the settings common to both sys1win.lnt
+//                and torture.lnt.  See sys1win.lnt and stipe.nte for instructions on using lint
+//
+
+// This is the regular expression you can use to search for lint !e that don't have any comments after
+// //lint .*!e[0123456789\*\?]*[ ]*$
+// Tell Lint how our code and message output should be formated
+-ha_3                                  // 3-line message format
+-printf(1,fmt)                         // tell lint that fmt looks like printf
++macros                                // added after getting error 303 (text to long) in wpdf.h
+
+// ************************************************************************************************
+// * These are the standard defines for all of projects                                           *
+// ************************************************************************************************
+-dlint                              // UNREFERENCED_PARAMETER in WinNT.h
+-d_AFXDLL
+-D_DLL                              // compiler defines this when using /MD
+-D_MT                               // (multi-threaded) compiler defines this when using /MD
+-d_MBCS
+-d_stdcall=                         // lint (-cmsc) knows that __stdcall is a keyword but crusher.h uses _stdcall
+-d_XTPLIB_NOAUTOLINK                // don't show codejock message
+-dstatic_assert(expr, comment)=     // 9.00f - This causes lint to choke if it is not defined out
+-ident($)                           // Used in the print$() functions of the report object
+-function( operator new (r) )       // assume 'new' will never return null (see pg 259)
+-function( operator new[] (r) )     //      "             "           "
+
+-doverride=							// override, abstract, and sealed are MSVC++ specific keywords... ignore them
+-dabstract=
+-dsealed=
+
+// ************************************************************************************************
+// * Lint indirection files that will greatly reduce the number of spurious warnings              *
+// ************************************************************************************************
+env-vc10.lnt                  // VC10 settings
+lib-w32.lnt                   // gimpel's win32 settings
+lib-wnt.lnt                   // Gimpel's winNT settings
+co-msc100.lnt                 // gimpel's vc10 settings
+lib-mfc.lnt                   // gimpel's mfc settings
+lib-atl.lnt		               // Gimpel's ATL (COM) settings
+lib-stl.lnt                   // Gimpel's STL settings
+
+// This has to be after co-msc90.lnt for the undef to do anything
+-u__STDC__                          // This lets us use strdup instead of _strdup (see string.h)
+
+// This has to be after the env-vc10.lnt for it to do anything
+-t3                                    // tabs are the same as 3 spaces
+
+// ************************************************************************************************
+// * Library Handling                                                                             *
+// ************************************************************************************************
++libclass(angle,foreign,ansi) // Headers are treated as library headers if they are in angle (like #include <filename.h>)
+                              // Or, if they are found by using the -i option or INCLUDE env var
+                              // Or, if they are a standard ANSI include
+                              
+//unlinted_h.lnt                // Or, if they are specifically set as library headers with +libh(filename.h)
+
+// ************************************************************************************************
+// * Suppression of complete error messages                                                       *
+// ************************************************************************************************
+-e14        // Symbol previously defined (build script gets this on 2nd pass)
+-e31        // Redefinition of symbol (build script gets this on 2nd pass)
+-e55        // Bad Type, this is a compile error (suppressed because of GupoFolder issues)
+-e56        // Bad Type, this is a compile error (suppressed because of GupoFolder issues)
+-e438       // don't check to make sure the last value assigned is used (breaks in some of our SAFE_DELETES)
+-e451       // ignore repeated include files without standard include guard (this fails because of tlib
+            // comments after the include guard #endif, and should be caught by the compiler/linker anyway)
+-e537       // ignore repeated include files
+-e551       // Symbol Not Accessed - This seems to be too random to be useful
+-e686       // Lint 9.00f gives this message if -e* is used...
+-e730       // Don't warn that a BOOL parameter is passed a bool
+-e835       // Zero given as argument (since we have alot of 0 enums and constants we use, this gives lots of spurious warnings)
+-e849       // Lint 9.00f - X has same enum value as Y - we do this all over and it's not worth supressing locally
+-e1025      // Lint 9.00f - This compiler error isn't thrown by VC10, so there's no point in fixing it
+-e1037      // Lint 9.00f - This compiler error isn't thrown by VC10, so there's no point in fixing it
+-e1059      // Can't convert from Type to Type.  This is a compiler error, and it's giving bogus errors in CComQIPtr atlcomcli.h
+-e1551      // Function may throw exception '...' in destructor (caused by "delete" or creating a variable with a ctor)
+-e1702      // operator X is both an ordinary function & a member function
+-e1712      // No default ctor defined
+-e1713      // ignore redundant parenthesis
+-e1717      // don't tell us about function declarations with empty prototypes (e.g. int f())       
+-e1752      // catch parameter is not a reference - Since we almost never use exceptions, we can't do anything about this in 99% of cases
+-e1774	   // Could use dynamic_cast to downcast polymorphic type (But we compile with /GR- switch)
+-e1942      // Ambiguity in template due to base class (not sure how 1942 is showing up in regular lint anyway)
+
+// when converting to lint9 and using the new Visual Studio 2008, I was getting 1013 and 64 in atlcomcli.h
+// I could find no information on the reason behind this error, so I am suppressing it here. Maybe the next 
+// lint update will have a fix.
+-elib(1013)
+-elib(64)
+-esym(18,ATL::CRegObject::ClearReplacements)
+
+-fiw           // initializing variables does not count as a write for 838 errors
++fpn           // Tell lint to assume all pointer parameters could be NULL
+-passes(2)     // Make 2 passes through each file
+
+
+// **Note** A lot of the exclusions have a ? at the end of the symbol.  This is because Lint uses the "A" or "W" 
+// version depending on the defines that are active.  The ? lets us use the regular name for the function without
+// worrying about if it is the "A" form or the "W" form (like GetMenuStringA, for example)
+// **NOTE** Exclusions that are not in library files should be moved to the header files that declare the functions
+// For example, all the ReportObject::* exclusions should be moved to StRptObj.h
+
+// ************************************************************************************************
+// * Symbol Suppression (Alphabetical by symbol)                                                  *
+// ************************************************************************************************
+-esym(451, *r.h)                          // Resource headers typically don't have include guards
+-esym(534, *::PostMessage*)
+-esym(534, *::ShowWindow)                 // Returns the previous state of the window
+-esym(534, *::SetFocus)                   // Returns the window that previously had focus
+-esym(534, *::RedrawWindow)               // Returns succeed/fail, but may not care
+-esym(534, *::SetIcon)                    // Returns the previous icon (assuming the documentation is incorrect)
+-esym(534, *::EnableWindow)               // Returns the previous state of the window
+-esym(534, *::SetWindowPos)               // Returns succeed/fail, but may not care
+-esym(1516, *::_BASE_)			            // When using a _BASE_ typedef that is private there is no need to worry about name hiding
+-esym(534, __debugbreak)                  // We don't care what this returns
+-esym(746, __debugbreak)                  // lint forums says __debugbreak is 'intrinsic' whatever that means
+-esym(1055,__debugbreak)                  // lint forums says __debugbreak is 'intrinsic' whatever that means
+-esym(1567, *_CComCacheData*)      		   // wierd error in atl
+-esym(*, __noop)                          // * because release gets confused, especially in TRACE statements
+-esym(1788,__scsa__)                      // accessed only by constructor or destructor (this is the SmartCritSecAuto macro)
+-esym(550, _acp)                          // not accessed (defined by USES_CONVERSION - See Mark for explanation)
+-esym(534, _AfxInitManaged)               // This one is never used directly, it is called by AFX_MANAGE_STATE - there is no MSDN documentation on it.
+-esym(1788,_ctlState)                     // accessed only by constructor or destructor (defined by AFX_MANAGE_STATE)
+-esym(550, _lpw)                          // not accessed (defined by USES_CONVERSION - See Mark for explanation)
+-esym(534, _strlwr)                       // Returnc character buffer
+-esym(534, Breathe*)                      // Returns zero except if WM_QUIT is received
+-esym(665, BUILD_KEY)                     // unparenthisized parameter in macro
+-esym(665, BUILD_SA_KEY)                  // unparenthisized parameter in macro
+-esym(534, BuildKeyObject::operato*)
+-esym(534, *CArray*::Add)                 // Returns the index of the added item
+-esym(534, C*List*::AddHead)              // Returns the POSITION of the added item
+-esym(534, C*List*::AddTail)              // Returns the POSITION of the added item
+-esym(534, CCmdTarget::ExternalRelease)   // Returns new reference count
+-esym(534, CDC::*)                        // @future - Re-enable specific functions
+-esym(534, CDialog::DoModal)              // Returns the result of the dialog
+-esym(534, CFont::CreateFontIndirect?)    // Returns succeed/fail, but may not care
+-esym(534, CLabel::Set*)                  // Returns CLabel reference for chaining
+-esym(534, CLabel::Flash*)                // Returns CLabel reference for chaining
+-esym(534, CMainFrame::setStatusText)     // Returns old status text, but restoreStatusText is usually called
+-esym(534, CMenu::GetMenuString?)
+-esym(534, CMenu::EnableMenuItem)         // Returns the previous state of the menu item
+-esym(1790, CNoTrackObject)               // Base class has no no-destructor virtual functions
+-esym(1738,CObject::CObject)              // CObject's copy constructor is private, so it cannot be used
+-esym(534, Coliminator::footer)
+-esym(534, Coliminator::print)
+-esym(534, Coliminator::printCentered)
+-esym(534, Coliminator::printRight)
+-esym(1512,CProcessLocalObject)           // dtor not virt
+-esym(534, CProgressCtrl::SetStep)        // Returns the previous step
+-esym(534, CProgressCtrl::SetPos)         // Returns the previous position
+-esym(1512,*CString*)                     // dtor not virt
+-esym(534, *CString*::Delete)             // Returns the number of characters in the buffer
+-esym(534, *CString*::Insert)             // Returns the number of characters in the buffer
+-esym(534, *CString*::MakeLower)          // Returns the string
+-esym(534, *CString*::MakeUpper)          // Returns the string
+-esym(534, *CString*::Remove)             // Returns the number of instances of characters replaced
+-esym(534, *CString*::Replace)            // Returns the number of instances of characters replaced
+-esym(534, *CString*::Trim)               // Returns the string
+-esym(534, *CString*::TrimLeft)           // Returns the string
+-esym(534, *CString*::TrimRight)          // Returns the string
+-esym(534, CtFileObj::setIndex)           // Returns old index
+-esym(1512,CThreadLocalObject)            // dtor not virt
+-esym(1788,CWaitCursor)                   // CWaitCursor is accessed only by constructor or destructor
+-esym(534, CWnd::FlashWindow)             // Returns whether the window was active prior to the call
+-esym(534, CWnd::GetDlgItemText?)         // Returns the numbers of characters copied to the buffer
+-esym(534, CWnd::SendMessage?)            // Return value of the message (and many don't have a specific return value)
+-esym(534, CWnd::KillTimer?)              // Returns success or invalid timer (ie - stupid programmer...)
+-esym(534, DisplayHelpTopic)              // Returns HWND
+-esym(534, DoEvents)                      // Returns zero except if WM_QUIT is received
+-esym(534, IUnknown::Release)             // Might return refcount
+-esym(1058,DrillDownObject &)             // ReportObject::setDrillDown should have taken a const & DrillDownObject
+                                          // but since it doesn't lint complains with error 1058 (Initializing a 
+                                          // non-const reference 'DrillDownObject &' with a non-lvalue
+-esym(1788,DR)                            // DR is accessed only by constructor or destructor
+-esym(534, errorHandlerBase)              // errorHandlerBase usually doesn't return
+-esym(534, *FileObj::setAlwaysValid)      // Returns the previous value
+-esym(534, fill_string)                   // Returns character buffer
+-esym(534, FormatMessage?)                // Returns the number of characters in output
+-esym(1788, fs)                           // accessed only by constructor or destructor
+-esym(534, GetEnvironmentVariable?)
+-esym(534, GetPrivateProfileString?)      // Returns the number of characters copied
+-esym(534, GetPrivateProfileString?)      // Returns the number of characters copied
+-esym(114, IMAPITable)         	          // Not sure what causes this lint error. Suppressed because it is in sdk header
+-esym(534, InterlockedIncrement*)         // Returns the new value
+-esym(534, InterlockedDecrement*)         // Returns the new value
+-esym(534, InterlockedExchange*)          // Returns initial value
+-esym(534, InterlockedExchangeAdd*)       // Returns initial value
+-esym(534, LaunchReport)                  // Can't fail
+-esym(534, MainFileObj::setIndex)         // Returns old index
+-esym(534, MsgBox)                        // ASSERTs in MsgBox function if MessageBox call fails
+-esym(534, MsgBoxEx)                      // Often don't care if the style is MB_OK
+-esym(750, new)                           // macro not referenced
+-esym(666, NT_CK)                         // second use of first parameter is mutually exculsive of the second if/else
+-esym(534, ReportObject::*)               // @fix - Move this to header and only unsuppress for specific functions
+-esym(534, SafeMsgBox)                    // ASSERTs in MsgBox function if MessageBox call fails
+-esym(534, SelObjBase::getDefValue)       // Ignore return values for getDefValue
+-esym(534, SelObjBase::defConvDate)       // Returns the buffer passed in
+-esym(534, SendMessage?)                  // Return value of the message (and many don't have a specific return value)
+-esym(534, SETOPS)                        // (SetOperationState) Return value is current operation state bits
+-esym(534, SetWindowLong*)                // Returns the previous value
+-esym(534, strcat_atmost)                 // Returns character buffer
+-esym(534, strcpy_upto)                   // Returns character buffer
+-esym(534, strdelblanks)                  // Returns character buffer
+-esym(534, strdelchr)                     // Returns character buffer
+-esym(534, stRead)                        // Returns the number of bytes read
+-esym(534, stRemove)                      // Failure is USUALLY caught by fatal error handler
+-esym(534, strtrim)                       // Returns character buffer
+-esym(534, strltrim)                      // Returns character buffer
+-esym(534, strcpy_atmost)                 // Returns character buffer
+-esym(534, strcpy_s)                      // Returns character buffer
+-esym(534, STString::cpyAtmost)           // Returns string that was copied
+-esym(534, STString::deleteToken)         // Returns whether the string has changed - often doesn't matter
+-esym(534, STString::addToken)            // Returns whether the string has changed - often doesn't matter
+-esym(534, STString::delBlanks)           // Returns the modified string (*this)
+-esym(534, STString::delChr)              // Returns the modified string (*this)
+-esym(534, stWriteProfile)                // ASSERTs in stWriteProfile function if WritePrivateProfileString fails
+-esym(534, TextPacket::bold)
+-esym(534, TextPacket::exclude)
+-esym(534, TextPacket::italic)
+-esym(534, TextPacket::shade)
+-esym(534, TextPacket::underline)
+-esym(551, XPCOLOR_*)                     // codejock symbol that is not referenced
+-esym(551, *_XT_*)                       	// codejock symbol that is not referenced
+-esym(551, xtp*)                       	// codejock symbol that is not referenced
+-esym(551, XTP*)                       	// codejock symbol that is not referenced
+-esym(766, sttest.h)                      // sttest.h will look unused because TESTCODE is rarely defined for lint
+
+// ************************************************************************************************
+// * Macro Suppression (Alphabetical by macro name)                                               *
+// ************************************************************************************************
+-emacro((732), A2OLE)                     // loss of sign (See Mark for explanation)
+-emacro((737), A2OLE)                     // loss of sign
+-emacro((746), A2OLE)                     // For some reason lint doesn't know about alloca here
+-emacro((1055), A2OLE)                    // For some reason lint doesn't know about alloca here
+-emacro(*,     BEGIN_MESSAGE_MAP)
+-emacro(578,   CTP)                       // If CTP is called in an internal scope where CTP is already called
+-emacro(*,     CONTAINING_RECORD)
+-emacro(*,     DECLARE_MESSAGE_MAP)
+-emacro(1511,  DECLARE_DYNAMIC)           // Hides base class's non-virtual _GetBaseClass() function
+-emacro(1511,  DECLARE_SERIAL)            // Member hides non-virtual member
+-emacro(1752,  DOTRACECATCH)              // Catch parameter not a reference
+-emacro(*,     END_MESSAGE_MAP)
+-emacro(522,   ListView_Arrange)          // Expected void type, assignment, increment or decrement
+-emacro(522,   ListView_EditLabel)        // Expected void type, assignment, increment or decrement
+-emacro(506,   ListView_GetItemRect)      // Constant value Boolean
+-emacro(941,   MAKELCID)                  // Result 0
+-emacro((845), MAKELONG)                  // Argument to operator is certain to be 0
+-emacro(522,   NT_CK)                     // sometimes the parm is __noop or equivalent
+-emacro(1704,  PREVENT_COPY)              // allow private ctors (used to prevent object creation using default ctor)
+-emacro((845), RGB)                       // Argument to operator is certain to be 0
+-emacro(774,   SAFE_DELETE)               // Boolean within 'if' always evalues to True/False
+-emacro(774,   SAFE_DELETE_AR)            // Boolean within 'if' always evalues to True/False
+-emacro(111,   UNREFERENCED_PARAMETER)    // WinNT.h didn't stay up-to-date with lint...
+-emacro(522,   USES_CONVERSION)           // expected void (See Mark for explanation)
+
+// ************************************************************************************************
+// * Supression for linting multiple source files at a time                                       *
+// ************************************************************************************************
+
+// lnt doesn't know about __declspec(selectany)
+-esym(14, gvBeehiveDeleted)                  // Stglobal.h
+-esym(14, gvCMConChkExcludeList)             // Stglobal.h
+-esym(14, gvCMDocIdxDontUseThread)           // Stglobal.h
+-esym(14, gvExitInstanceDone)                // Stglobal.h
+-esym(14, gvFinishedInitInstanceSw)          // Stglobal.h
+-esym(14, gvIndexJobBeeHandle)               // Stglobal.h
+-esym(14, gvInsideExitInstanceSw)            // Stglobal.h
+-esym(14, gvInsideFatalErrorHandlerSw)       // Stglobal.h
+-esym(14, gvLoginNum)                        // Stglobal.h
+-esym(14, gvResetSw)                         // Stglobal.h
+-esym(14, gvShowingDirDlg)                   // Stglobal.h
+-esym(14, gvSuspendDocIndexing)              // Stglobal.h
+-esym(14, gvTerminateIndexJobs)              // Stglobal.h
+-esym(14, gvThreadInsideFatalErrorHandlerSw) // Stglobal.h
+-esym(14, gvSkipStaticFieldSetup)            // Stglobal.h
+
+
+// lnt doesn't know about __forceinline
+// Handle multiple definitions in winnt.h
+-esym(14, MemoryBarrier)
+-esym(14, RtlSecureZeroMemory)
+-esym(14, InterlockedAnd64)
+-esym(14, InterlockedOr64)
+-esym(14, InterlockedXor64)
+-esym(14, InterlockedIncrement64)
+-esym(14, InterlockedDecrement64)
+-esym(14, InterlockedExchange64)
+-esym(14, InterlockedExchangeAdd64)
+-esym(14, __InlineInterlockedCompareExchangePointer)
+
+// lnt doesn't know about __declspec(selectany)
+// Handle multiple definitions in atlbase.h
+-esym(14, LIBID_ATLLib)
+-esym(14, CLSID_Registrar)
+-esym(14, IID_IRegistrar)
+-esym(14, IID_IAxWinHostWindow)
+-esym(14, IID_IAxWinAmbientDispatch)
+-esym(14, IID_IInternalConnection)
+-esym(14, IID_IDocHostUIHandlerDispatch)
+-esym(31, ATL::_pModule)
+-esym(31, ATL::GUID_ATLVer30)
+-esym(31, ATL::CComModule::m_libid)
+-esym(31, ATL::CComApartment::ATL_CREATE_OBJECT)
+
+// a couple problems with the windows library headers (I beleive at least the top for of these are fixed in lint 9.00b)
+-esym(18, _TRANSACTION_NOTIFICATION_RECOVERY_ARGUMENT::UOW)
+-esym(18, _TRANSACTION_LIST_ENTRY::UOW)
+-esym(18, _KCRM_TRANSACTION_BLOB::UOW)
+-esym(38, _KCRM_TRANSACTION_BLOB::*)
+-esym(114,[*::]_com_error)
+-esym(38,[*::]_com_error::*)
+
+// More windows fixes for VC10 & lint 9.00f)
+-esym(18, __debugbreak)
+-esym(1024, __debugbreak)
+-esym(114, ATL::CComBSTR*)
+-esym(119, ATL::CComBSTR*)
+-esym(148, ATL::CComBSTR*)
+-esym(1025, ATL::CComBSTR*)
+-esym(148, _com_ptr_t*)
