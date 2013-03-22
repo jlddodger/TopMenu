@@ -73,6 +73,25 @@ public:
       { m_mutex.leave(); }
 };
 
+class TopMenu_Hook
+{
+   HHOOK m_hHook;
+
+public:
+   TopMenu_Hook()
+      : m_hHook(NULL)
+      { }
+
+   void set(HHOOK _hHook)
+      { m_hHook = _hHook; }
+
+   void reset()
+      { if(m_hHook) { BOOL b=UnhookWindowsHookEx(m_hHook); ASSERT(b); m_hHook = NULL; } }
+
+   ~TopMenu_Hook()
+      { reset(); }
+};
+
 class EveryoneAccess
 {
    PSECURITY_DESCRIPTOR pLowIntegritySD;
@@ -113,3 +132,21 @@ public:
       return &attr;
    }
 };
+
+BOOL IsWin7OrLater()
+{
+   // Initialize the OSVERSIONINFOEX structure.
+   OSVERSIONINFOEX osvi;
+   ZeroMemory(&osvi, sizeof(OSVERSIONINFOEX));
+   osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+   osvi.dwMajorVersion = 6;
+   osvi.dwMinorVersion = 1;
+
+   // Initialize the condition mask.
+   DWORDLONG dwlConditionMask = 0;
+   VER_SET_CONDITION(dwlConditionMask, VER_MAJORVERSION, VER_GREATER_EQUAL);
+   VER_SET_CONDITION(dwlConditionMask, VER_MINORVERSION, VER_GREATER_EQUAL);
+
+   // Perform the test.
+   return VerifyVersionInfo(&osvi, VER_MAJORVERSION | VER_MINORVERSION, dwlConditionMask);
+}
