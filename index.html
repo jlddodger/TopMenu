@@ -40,14 +40,60 @@
 
         <p>Welcome to <strong>TopMenu</strong> by Aperture Logic™.</p>
 
-<p>TopMenu is a functionality clone of <a href="http://www.abstractpath.com/powermenu">PowerMenu</a>, but designed to be compatible with Windows 7 and 64-bit systems.  TopMenu is under early development.  It may crash or cause other problems (though I currently use it everyday with only rare issues).</p>
+<p>TopMenu is a functionality clone of <a href="http://www.abstractpath.com/powermenu">PowerMenu</a>, but designed to be compatible with Windows 7 and 64-bit systems.  TopMenu is under early development.  It may crash or cause other problems (though I currently use it every day with only rare issues), and because TopMenu runs inside your other applications a serious failure in TopMenu can bring down every application in your session.  This is a danger of using global hooks which is part of how TopMenu works.  See stock disclaimer below.</p>
 
-<p>Technical preview version:</p>
+<h2>Technical preview version</h2>
 
 <ul>
 <li><a href="https://github.com/jlddodger/TopMenu/blob/master/TopMenu32.msi?raw=true">TopMenu32.msi</a></li>
 <li><a href="https://github.com/jlddodger/TopMenu/blob/master/TopMenu64.msi?raw=true">TopMenu64.msi</a></li>
 </ul><p><strong>Note for x64 users</strong>: Install both files to the same folder</p>
+
+<h2>Instructions</h2>
+
+<h3>Installation</h3>
+
+<ul>
+<li>Download the TopMenu Installer <em>(x64 users should download both)</em>
+</li>
+<li>Install TopMenu <em>(x64 users must install both to the same folder)</em>
+</li>
+</ul><h3>Startup</h3>
+
+<ul>
+<li>Run the TopMenuTray[32|64].exe that matches your system</li>
+<li>Right-click on the tray icon and click <strong>Load</strong>
+</li>
+</ul><h3>Shutdown</h3>
+
+<ul>
+<li>Right-click on the tray icon and click <strong>Unload</strong>
+</li>
+<li>Right-click on the tray icon and click <strong>Exit</strong>
+</li>
+</ul><h2>Features</h2>
+
+<ul>
+<li>TopMenu run resident in <strong>your</strong> applications.  This means that you can exit the tray application and the TopMenu extensions will remain available in the context menus of your programs.</li>
+<li>Each processes' environment will be updated to indicate the status of TopMenu (TopMenu_Plugin).  This environment variable can be seen with a utility program like <a href="http://technet.microsoft.com/en-us/sysinternals/bb896653">PROCMON.EXE</a>
+</li>
+</ul><h2>Issues</h2>
+
+<ul>
+<li>Google Chrome is sand-boxed so while the context menu items appear none of them work</li>
+<li>Explorer cannot be minimized to tray unless the 'Launch folder windows in a separate process' option is selected</li>
+<li>The tray application must be launched with 'Run as administrator' if UAC enabled in order to work with elevated applications</li>
+<li>There is delay when starting new programs before the extensions are available in the menu (Load usually can fix this)</li>
+<li>This is brand new code so many other issues <strong>will</strong> exist particularly in environments other than Windows 7 64-bit</li>
+</ul><h2>Disclaimer</h2>
+
+<p>We don't claim Interactive EasyFlow is good for anything if you think it is, great, but it's up to you to decide.
+If Interactive EasyFlow doesn't work: tough. If you lose a million because Interactive EasyFlow messes up, it's you that's out of the million, not us.
+If you don't like this disclaimer: tough. We reserve the right to do the absolute minimum provided by law, up to and including nothing.
+This is basically the same disclaimer that comes with all software packages, but ours is in plain English and theirs is in legalese.
+We didn't really want to include a disclaimer at all, but our lawyers insisted. We tried to ignore them, but they threatened us with the shark attack at which point we relented</p>
+
+<p>Thanks to <a href="https://en.wikipedia.org/wiki/Interactive_EasyFlow">https://en.wikipedia.org/wiki/Interactive_EasyFlow</a></p>
       </section>
 
     </div>
