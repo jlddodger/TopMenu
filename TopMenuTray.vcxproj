@@ -152,6 +152,7 @@
   <ItemGroup>
     <ClInclude Include="TopMenuTrayR.h" />
     <ClInclude Include="TopMenuTray.h" />
+    <ClInclude Include="TopMenu_Version.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TopMenuTray.cpp" />

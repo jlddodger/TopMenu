@@ -25,6 +25,7 @@
     <ClInclude Include="TopMenu_Plugin.h" />
     <ClInclude Include="TopMenuCoreR.h" />
     <ClInclude Include="TopMenu_Util.h" />
+    <ClInclude Include="TopMenu_Version.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="TopMenuCore.rc" />

@@ -23,6 +23,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TopMenuR.h" />
+    <ClInclude Include="TopMenu_Version.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="TopMenu.rc" />

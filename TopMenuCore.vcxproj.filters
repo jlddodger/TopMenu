@@ -29,6 +29,9 @@
     <ClInclude Include="TopMenu_Util.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TopMenu_Version.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="TopMenuCore.rc">

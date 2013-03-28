@@ -28,5 +28,8 @@
     <ClInclude Include="TopMenuR.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TopMenu_Version.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
