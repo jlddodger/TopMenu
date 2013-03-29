@@ -224,7 +224,7 @@
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
         "ProductVersion" = "8:0.0.1"
-        "Manufacturer" = "8:Aperture Logic™"
+        "Manufacturer" = "8:Aperture Logic"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
         "Title" = "8:TopMenu 1.0.0.1"
