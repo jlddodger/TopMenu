@@ -75,12 +75,16 @@
 
 <ul>
 <li>TopMenu run resident in <strong>your</strong> applications.  This means that you can exit the tray application and the TopMenu extensions will remain available in the context menus of your programs.</li>
-<li>Each processes' environment will be updated to indicate the status of TopMenu (TopMenu_Plugin).  This environment variable can be seen with a utility program like <a href="http://technet.microsoft.com/en-us/sysinternals/bb896653">PROCMON.EXE</a>
-</li>
+<li>Each processes' environment will be updated to indicate the status of TopMenu (TopMenu_Plugin).  This environment variable can be seen with a utility program like <a href="http://technet.microsoft.com/en-us/sysinternals/bb896653">PROCMON.EXE</a></li>
+<li>TopMenu can be loaded without the tray by using command-line parameters TopMenuTray</li>
+  <ul>
+    <li>"load" - This will start TopMenu without the keeping the tray application running.</li>
+    <li>"unload" - This will stop TopMenu in both 64-bit and 32-bit applications.</li>
+  </ul>
 </ul><h2>Issues</h2>
 
 <ul>
-<li>Google Chrome is sand-boxed so while the context menu items appear none of them work</li>
+<li>Google Chrome is sand-boxed so whilet he context menu items appear none of them work</li>
 <li>Explorer cannot be minimized to tray unless the 'Launch folder windows in a separate process' option is selected</li>
 <li>In order to work with elevated applications, the tray application must be launched with 'Run as administrator' if UAC enabled </li>
 <li>There can be a delay when starting new programs before the extensions are available in the menu (Load usually can fix this)</li>
